@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            position: relative;
+        }
+        .viewport{
+            width: 250px;
+            height: 200px;
+            border: solid 2px;
+            position: absolute;
+            left: 250px;
+            top: 100px;
+            transform: translateX(-50%);
+            overflow: hidden;
+        }
+        .longfig{
+            width: 1500px;
+            overflow: hidden;
+            transform: translateX(-16.66%);
+        }
+        .fig{
+            float: left;
+            width: 250px;
+            height: 200px;
+            font-size: 30px;
+            text-align: center;
+            line-height: 200px;
+        }
+        .fig:nth-child(2n){
+            background-color: yellow;
+        }
+        .fig:nth-child(2n+1){
+            background-color: red;
+        }
+        #buttonlist{
+            position: absolute;
+        }
+        button{
+            width: 60px;
+            height: 30px;
+        }
+        #left{
+            position: absolute;
+            z-index: 1;
+            left:125px;
+            top: 200px;
+            transform: translate(0, -50%);
+        }
+        #right{
+            position: absolute;
+            z-index: 1;
+            left:375px; 
+            top: 200px;
+            transform: translate(-100%, -50%); 
+        }
+        h3{
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h3>使用计时器实现无限循环的轮播图效果，因为最末尾的图片有一秒的延时，
+        所以无法迅速的将全部图片轮转完（1s内）</h3>
+    <div id="buttonlist">
+        <button id="left">left</button>
+        <button id="right">right</button>
+    </div>
+    <div class="viewport">
+        <div class="longfig">
+            <div class="fig">4</div>
+            <div class="fig">1</div>
+            <div class="fig">2</div>
+            <div class="fig">3</div>
+            <div class="fig">4</div>
+            <div class="fig">1</div>
+        </div>
+    </div>
+
+    <script>
+        let el = document.querySelector('.longfig')
+        let indcur = 1
+        let fignum = 4 + 2
+        buttonlist.addEventListener('click', (e) => {
+            let dire 
+            el.style.transition = '1s'
+            if (e.target === left){
+                if (indcur < fignum - 1){
+                    indcur++
+                    el.style.transform = `translateX(-${100/fignum * indcur}%)`
+                    // 过了真正的最后一张，以及虚假的第一张后，多触发一次事件，
+                    // 没有过渡动画直接跳到真实的第一张
+                    if (indcur === fignum - 1){
+                        setTimeout(() => {
+                            el.style.transition = 'none'
+                            el.style.transform = `translateX(-${100/fignum * 1}%)`
+                            indcur = 1
+                        },1000)
+                    }
+                } 
+            }
+            if (e.target === right){
+                if (indcur > 0){
+                    indcur--
+                    el.style.transform = `translateX(-${100/fignum * indcur}%)`
+                    if (indcur === 0){
+                        setTimeout(() => {
+                            el.style.transition = 'none'
+                            el.style.transform = `translateX(-${100/fignum * (fignum-2)}%)`
+                            indcur = fignum - 2
+                        },1000)
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
