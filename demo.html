@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .outer{
+            height: 100px;
+            border: 2px solid;
+            padding: 10px;
+        }
+        .outer,.droppable{
+            display: flex;
+        }
+        .draggable,.droppable div{
+            width: 100px;
+            height: 100px;
+        }   
+        .draggable{
+            margin-right: 10px;
+        }
+        .droppableItem{
+            border: dotted 2px;
+        }
+        .yellow{
+            background-color: lightyellow;
+        }
+        .red{
+            background-color: lightcoral;
+        }
+        .green{
+            background-color: lightgreen;
+        }
+        .hover{
+            border: solid 2px goldenrod;
+        }
+        .divided{
+            height: 100px;
+            width: 3px;
+            background: gray;
+        }
+        .spanSelected{
+            background-color: red;
+        }
+        .borderLeft{
+            border: solid 2px darkblue;
+        }
+        .borderRight{
+            border: solid 2px darkred;
+        }
+        #btn{
+            width: 80px;
+            height: 30px;
+            line-height: 30px;
+            border: none;
+            background-color: lightseagreen;
+            margin-top: 30px;
+        }
+        #btn:hover{
+            background-color:lightsalmon
+        }
+    </style>
+</head>
+<body>
+    <h3>说明</h3>
+    <ul>
+        <li>1.这里使用div色块代替图片，上方为图片区，下方为放置区。</li>
+        <li>2.放置区的元素也可以再拿回到图片区，此外，图片区的图片不会重叠。</li>
+        <li>3.点击图片区的间隔部分可以实现分割图片区域的特性，点击取消分割可以复原重新选择。</li>
+    </ul>
+    <div class="outer">
+        <div class="yellow draggable" draggable="true"></div>
+        <div class="red draggable" draggable="true"></div>
+        <div class="green draggable" draggable="true"></div>
+        <div class="yellow draggable" draggable="true"></div>
+        <div class="red draggable" draggable="true"></div>
+        <div class="green draggable" draggable="true"></div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div class="droppable">
+        <div></div>
+        <span class="divided"></span>
+        <div></div>
+        <span class="divided"></span>
+        <div></div>
+        <span class="divided"></span>
+        <div></div>
+        <span class="divided"></span>
+        <div></div>
+        <span class="divided"></span>
+        <div></div>
+    </div>
+    <button id="btn">取消分割</button>
+
+    <script>
+        // 可拖拽元素列表
+        const draggableList = document.querySelectorAll('.draggable')
+        const dropBox = document.querySelector('.droppable')
+        // 放置列表
+        const blist = dropBox.children
+        // 被拖拽的元素
+        let tempel
+        // 用来分割视频
+        const dividedList = document.querySelectorAll('.divided')
+        Array.from(draggableList).forEach(x => {
+            x.addEventListener('dragstart', (e) => {
+                tempel = e.target
+            })
+        })
+        const funcDragover = (e) => {
+            e.preventDefault()
+            e.target.classList.add('hover')
+        }
+        const funcDragleave = (e) => {
+            e.preventDefault()
+            e.target.classList.remove('hover')
+        }
+        const funcDrop = (e) => {
+            console.log(e.target.children.length)
+            // 不能重叠
+            if (!e.target.draggable){
+                e.target.append(tempel)
+            }
+            e.target.classList.remove('hover')
+        }
+        Array.from(blist).forEach(x => {
+            x.classList.add('droppableItem')
+            x.addEventListener('dragover', funcDragover)
+            x.addEventListener('dragleave', funcDragleave)
+            x.addEventListener('drop', funcDrop)
+        })
+        // 可以放回去
+        const outer = document.querySelector('.outer')
+        outer.addEventListener('dragover', funcDragover)
+        outer.addEventListener('dragleave', funcDragleave)
+        outer.addEventListener('drop', funcDrop)
+
+        // 分割视频功能
+        const dividedEffect = (e) => {
+            let temp = e.target
+            temp.classList.add('spanSelected')
+            while (temp && temp.previousElementSibling){
+                temp = temp.previousElementSibling
+                temp.classList.add('borderLeft')
+                temp = temp.previousElementSibling
+            }
+            temp = e.target
+            while (temp && temp.nextElementSibling){
+                temp = temp.nextElementSibling
+                temp.classList.add('borderRight')
+                temp = temp.nextElementSibling
+            }
+            Array.from(dividedList).forEach(x => {
+                x.removeEventListener('click', dividedEffect)
+            })    
+        }
+        // 增加分割视频的监听
+        Array.from(dividedList).forEach(x => {
+            x.addEventListener('click', dividedEffect)
+        })
+        // 按钮
+        const btnEffect = e => {
+            Array.from(dropBox.children).forEach(s => {
+                if (s.tagName === 'DIV'){
+                    if (s.classList.contains('borderLeft')){
+                        s.classList.remove('borderLeft')
+                    }
+                    if (s.classList.contains('borderRight')){
+                        s.classList.remove('borderRight')
+                    }
+                }
+                else{
+                    if (s.classList.contains('spanSelected')){
+                        s.classList.remove('spanSelected')
+                    }
+                }
+            })
+            // 增加分割视频的监听
+            Array.from(dividedList).forEach(x => {
+                x.addEventListener('click', dividedEffect)
+            })
+        }
+        btn.addEventListener('click', btnEffect)
+        
+    </script>
+</body>
+</html>
