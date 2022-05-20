@@ -44,10 +44,12 @@
             padding-top: 30px;
             color: white;
         }
-        input:focus ~ label{
+        input:focus ~ label,
+        input:valid ~ label{
             bottom: 20px;
             color: aqua;
             font-size: 12px;
+            transition: 0.5s;
         }
 
 
@@ -148,11 +150,11 @@
     <div class="wrapper">
         <h3>Login</h3>
         <div>
-            <input type="text" id="ainput">
+            <input type="text" id="ainput" required>
             <label for="ainput">username</label>
         </div>
         <div>
-            <input type="password" id="binput">
+            <input type="password" id="binput" required>
             <label for="binput">password</label>
         </div>
         <br/>
